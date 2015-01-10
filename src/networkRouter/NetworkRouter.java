@@ -5,6 +5,27 @@ import java.util.List;
 
 public class NetworkRouter {
 	/**
+	 * Determines the fastest path using Dijkstra algorithm, the input is given 
+	 * in matrix form and outputs the nodes which need to be taken to reach 
+	 * the destination. Example http://i.imgur.com/iXuaqNT.png
+	 * 
+	 * Example input:
+	 * 8
+	 * -1,11,9,6,-1,-1,-1,-1
+	 * 11,-1,-1,5,7,-1,-1,-1
+	 * 9,-1,-1,12,-1,6,-1,-1
+	 * 6,5,12,-1,4,3,7,-1
+	 * -1,7,-1,4,-1,-1,2,-1
+	 * -1,-1,6,3,-1,-1,8,10
+	 * -1,-1,-1,7,2,8,-1,6
+	 * -1,-1,-1,-1,-1,10,6,-1
+	 * B H
+	 * 
+	 * Example output:
+	 * BEGH
+	 * 
+	 * Diagram given below,
+	 * http://i.imgur.com/Aajz4zj.png
 	 * 
 	 * @param args
 	 */
@@ -75,7 +96,6 @@ public class NetworkRouter {
 			
 			//Remove from openList, add to closedList
 			closedList.add(openList.get(listLocation));
-			int[] temp = openList.get(listLocation);
 			openList.remove(listLocation);
 			
 			//Check if the node is the end point
