@@ -17,7 +17,6 @@ public class NetworkRouter {
 			System.out.println("Not valid number of integers");
 		}
 		int[][] distance = new int[numRouters][numRouters];
-		System.out.println(""+numRouters);
 		for(int i=0; i<numRouters; i++){
 			String[] values = args[1+i].split(",");
 			for(int j=0; j<numRouters; j++){
@@ -32,10 +31,6 @@ public class NetworkRouter {
 		//Get the start and end nodes
 		String startLocation = args[1+numRouters];
 		String endLocation = args[2+numRouters];
-
-		System.out.println(startLocation + ": " + ((startLocation.charAt(0))-'A'));
-		System.out.println(endLocation + ": " + ((endLocation.charAt(0))-'A'));
-		System.out.println("");
 		
 		// Determine the shortest path to exit
 		//Hold a list in the format <[x, y, F, Xp, Yp], [...], ...>
@@ -56,7 +51,6 @@ public class NetworkRouter {
 				}
 				int[] initialNode = {i, i, distance[i][(startLocation.charAt(0))-'A'], (startLocation.charAt(0))-'A', (startLocation.charAt(0))-'A'};
 				openList.add(initialNode);
-				System.out.println((char)(i+'A') + ": " + distance[i][(startLocation.charAt(0))-'A']);
 			}
 		}
 		
@@ -86,7 +80,6 @@ public class NetworkRouter {
 			
 			//Check if the node is the end point
 			if(closestNode == ((endLocation.charAt(0))-'A')){
-				System.out.println("HOLY CRAP");
 				destinationFound = 1;
 			}
 			
@@ -113,33 +106,31 @@ public class NetworkRouter {
 					if(openDuplicate == 0){
 						int[] initialNode = {i, i, distance[i][closestNode]+closest, closestNode, closestNode};
 						openList.add(initialNode);
-						System.out.println((char)(i+'A') + ": " + (distance[i][closestNode]+closest));
 					}
 				}
 			}
 		}
 		
-		System.out.println("");
-		for(int i=0; i<closedList.size(); i++){
-			System.out.println(i + ": " + (char)(closedList.get(i)[0]+'A'));
-		}
-		
 		//Backtrack to from the final location back to the starting point
 		String path = "";
 		int foundStart = 0;
-		int activeNode = endLocation.charAt(0);
+		int activeNode = endLocation.charAt(0)-'A';
 		while(foundStart == 0){
 			for(int i=0; i<closedList.size(); i++){
-				if(closedList.get(i)[0] == (activeNode-'A')){
+				if(closedList.get(i)[0] == activeNode){
 					activeNode = closedList.get(i)[3];
 					path += (char)(closedList.get(i)[0]+'A');
-					System.out.println("HERE: " + activeNode);
+					
 				}
 			}
-			if(activeNode == startLocation.charAt(0)){
+			
+			if(activeNode == startLocation.charAt(0)-'A'){
+				path += startLocation.charAt(0);
 				foundStart = 1;
 			}
 		}
+		//Reverse the string 
+		path = new StringBuilder(path).reverse().toString();
 		System.out.println(path);
 	}
 }
