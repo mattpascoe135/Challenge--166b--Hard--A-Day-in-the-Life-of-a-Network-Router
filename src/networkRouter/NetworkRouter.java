@@ -9,6 +9,7 @@ public class NetworkRouter {
 	 * @param args
 	 */
 	public static void main(String[] args){
+		//Go through the input data and place into relevant variables
 		int numRouters = 0;
 		try{
 			numRouters = Integer.parseInt(args[0]);
@@ -34,6 +35,7 @@ public class NetworkRouter {
 
 		System.out.println(startLocation + ": " + ((startLocation.charAt(0))-'A'));
 		System.out.println(endLocation + ": " + ((endLocation.charAt(0))-'A'));
+		System.out.println("");
 		
 		// Determine the shortest path to exit
 		//Hold a list in the format <[x, y, F, Xp, Yp], [...], ...>
@@ -59,11 +61,85 @@ public class NetworkRouter {
 		}
 		
 		//Search for the shortest path
-		while(destinationFound == 0 || !openList.isEmpty()){
+		while(destinationFound == 0 && !openList.isEmpty()){
+			int closest = -1;
+			int closestNode = -1;
+			int listLocation = -1;
 			//Find the closest node, one with the smallest F value
-			for(int i=0; i<openList.size()-1; i++){
-				
+			for(int i=0; i<openList.size(); i++){
+				if(closest == -1){
+					closest = openList.get(i)[2];
+					closestNode = openList.get(i)[0];
+					listLocation = i;
+				}
+				if(openList.get(i)[2] < closest){
+					closest = openList.get(i)[2];
+					closestNode = openList.get(i)[0];
+					listLocation = i;
+				}
+			}
+			
+			//Remove from openList, add to closedList
+			closedList.add(openList.get(listLocation));
+			int[] temp = openList.get(listLocation);
+			openList.remove(listLocation);
+			
+			//Check if the node is the end point
+			if(closestNode == ((endLocation.charAt(0))-'A')){
+				System.out.println("HOLY CRAP");
+				destinationFound = 1;
+			}
+			
+			//Find new adjacent tiles, check if at the end
+			for(int i=0; i<numRouters; i++){
+				int duplicate = 0;
+				for(int j=0; j<closedList.size(); j++){
+					if(closedList.get(j)[0] == i){
+						duplicate = 1;
+					}
+				}
+				if(distance[i][closestNode] != -1 && duplicate == 0){
+					int openDuplicate = 0;
+					for(int j=0; j<openList.size(); j++){
+						if(openList.get(j)[0] == i){
+							if(openList.get(j)[2] > (distance[i][closestNode]+closest)){
+								openList.remove(j);
+							}else{
+								openDuplicate = 1;
+							}
+							
+						}
+					}
+					if(openDuplicate == 0){
+						int[] initialNode = {i, i, distance[i][closestNode]+closest, closestNode, closestNode};
+						openList.add(initialNode);
+						System.out.println((char)(i+'A') + ": " + (distance[i][closestNode]+closest));
+					}
+				}
 			}
 		}
+		
+		System.out.println("");
+		for(int i=0; i<closedList.size(); i++){
+			System.out.println(i + ": " + (char)(closedList.get(i)[0]+'A'));
+		}
+		
+		//Backtrack to from the final location back to the starting point
+		String path = "";
+		int foundStart = 0;
+		int activeNode = endLocation.charAt(0);
+		while(foundStart == 0){
+			for(int i=0; i<closedList.size(); i++){
+				if(closedList.get(i)[0] == (activeNode-'A')){
+					activeNode = closedList.get(i)[3];
+					path += (char)(closedList.get(i)[0]+'A');
+					System.out.println("HERE: " + activeNode);
+				}
+			}
+			if(activeNode == startLocation.charAt(0)){
+				foundStart = 1;
+			}
+		}
+		System.out.println(path);
 	}
 }
